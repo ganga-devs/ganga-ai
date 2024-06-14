@@ -1,0 +1,3 @@
+ipython
+llama-index
+llama-index-llms-ollama
