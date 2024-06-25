@@ -10,14 +10,25 @@
 # ```
 # """.strip()
 
-CODE_ASSITANCE_PROMPT = """
-Write a hello world python code
-""".strip()
-
 from llama_index.llms.ollama import Ollama
+from llama_index.core.llms import ChatMessage
 from typing import Optional
+from rich.console import Console
+from rich.markdown import Markdown
 
-def generate_response(prompt: str = CODE_ASSITANCE_PROMPT, context: Optional[str] = None):
-    llm = Ollama (model="mistral")
+console = Console()
+
+def generate_initial_response(prompt: str):
+    llm = Ollama (model="mistral", request_timeout=300)
     result = llm.complete(prompt)
     return result
+
+# def generate_response(context: list[ChatMessage]):
+def generate_response(context):
+    llm = Ollama (model="mistral")
+    result = llm.chat(context)
+    return result
+
+def format_output(rawOutput: str):
+    markdownOutput = Markdown(rawOutput)
+    console.print(markdownOutput)
