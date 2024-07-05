@@ -1,0 +1,12 @@
+On loading of the plugin config is read and the assist method is called. 
+
+References
+https://stackoverflow.com/questions/18907103/ipython-can-i-provide-input-to-a-shell-command
+https://stackoverflow.com/questions/60064718/how-to-get-the-current-ipython-session-number-for-use-in-history
+https://stackoverflow.com/questions/40110540/jupyter-magic-to-handle-notebook-exceptions
+https://ipython.readthedocs.io/en/stable/config/custommagics.html
+
+Ipython 'In' and 'Out'
+We want to be able to pass lets say the last n number of In's and if they produced any corresponding Out's too as context to the llm.
+
+So Out is a dictionary with keys corresponding to the generated output. But not necessarily will all inputs have an output.
