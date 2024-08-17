@@ -75,7 +75,7 @@ class Terminal:
     def _handle_initial_error(self, err_value: str) -> None:
         self._display_formatted_output("Processing the error to help you...")
         self._add_error_to_context(err_value)
-        llm_json_response: ChatResponse = generate_response(context=self.context)
+        llm_json_response: ChatResponse = generate_response(context=self.context, model_name=self.config.get_model())
         llm_str_response: str = llm_json_response.message.content or ""
         self._display_formatted_output(llm_str_response)
         self._add_llm_response_to_context(llm_str_response)
@@ -85,16 +85,16 @@ class Terminal:
 
     def _handle_input_with_existing_context(self, user_input: str) -> None:
         self._add_user_input_to_context(user_input)
-        llm_json_response: ChatResponse = generate_response(context=self.context)
+        llm_json_response: ChatResponse = generate_response(context=self.context, model_name=self.config.get_model())
         llm_str_response: str = llm_json_response.message.content or ""
         self._display_formatted_output(llm_str_response)
         self._add_llm_response_to_context(llm_str_response)
 
     def _handle_fresh_input(self, user_input: str) -> None:
-        self._add_system_prompt_to_context(self.config.get_prompt())
+        self._add_system_prompt_to_context(self.config.get_system_prompt())
         context: str = self._build_context_for_assists()
         self._add_user_input_to_context(context + user_input)
-        llm_json_response: ChatResponse = generate_response(context=self.context)
+        llm_json_response: ChatResponse = generate_response(context=self.context, model_name=self.config.get_model())
         llm_str_response: str = llm_json_response.message.content or ""
         self._display_formatted_output(llm_str_response)
         self._add_llm_response_to_context(llm_str_response)
