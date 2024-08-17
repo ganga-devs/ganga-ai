@@ -1,6 +1,7 @@
 import configparser
 import os
 
+
 class Config:
     _config_file_path = ".gangaairc"
     _default_system_prompt = "Your task is to help users write and diagonize the python code they write at a Ipython terminal. Use markdown to format the responses. If the user is interactintg with you the message starts with %%assisst else the user is just running commands."
@@ -9,7 +10,9 @@ class Config:
     def __init__(self):
         config = self._build_config_parser_object()
         self._model = config["DEFAULT"].get("model", self._default_model)
-        self._system_prompt = config["DEFAULT"].get("system_prompt", self._default_system_prompt)
+        self._system_prompt = config["DEFAULT"].get(
+            "system_prompt", self._default_system_prompt
+        )
 
     def get_model(self) -> str:
         return self._model
