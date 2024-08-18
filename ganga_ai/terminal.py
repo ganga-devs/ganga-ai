@@ -13,6 +13,7 @@ from .llm import generate_response
 This class is responsible for maintaing terminal state and does all the heavy lifting. It exposes apis the magic commands can use.
 """
 
+
 class Terminal:
     def __init__(self):
         self._console = Console()
@@ -108,6 +109,6 @@ class Terminal:
                 self._handle_empty_input()
         else:
             self._handle_fresh_input(user_input)
-    
+
     def handle_error(self, err_value: str) -> None:
         self._handle_initial_error(err_value)

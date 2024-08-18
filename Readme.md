@@ -41,3 +41,15 @@ To run the code do
 $ ipython
 $ %load_ext ganga-ai
 ```
+
+# Docker
+To run the code in docker do
+```
+docker build --tag ganga-ai . # ganga-ai can be named anything
+docker run -it --name test ganga-ai # test can be named anything
+```
+
+To remove the current image do
+```
+docker rmi test
+```

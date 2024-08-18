@@ -4,17 +4,19 @@ from .helpers.sanitize_user_input import sanitize_user_input
 from .terminal import Terminal
 
 terminal = Terminal()
-itb = AutoFormattedTB(mode = "Plain", tb_offset = 1)
+itb = AutoFormattedTB(mode="Plain", tb_offset=1)
 
 """
 This custom_exception callback is registered with ipython such that anytime any exception occurs this callback is run.
 If the exception is caused by a <C-c> or <C-d> we let it take place. Else we grather the error and send it to the llm for help.
 If the user wants they can exit before llm finishes responding by <C-c>
 """
+
+
 def custom_exception(shell, etype, evalue, tb, tb_offset=None):
     # show the err in the terminal also and dont just swallow it
     shell.showtraceback((etype, evalue, tb), tb_offset=tb_offset)
-    
+
     # if the user wants to interrupt or the process let the user do so
     if etype in ["KeyboardInterrupt", "SystemExit"]:
         return
@@ -27,6 +29,7 @@ def custom_exception(shell, etype, evalue, tb, tb_offset=None):
     # if user interrupts it
     except KeyboardInterrupt:
         pass
+
 
 def assist(line, cell):
     """
