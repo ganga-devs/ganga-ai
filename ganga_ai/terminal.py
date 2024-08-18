@@ -31,8 +31,8 @@ class Terminal:
         # self._add_to_context_window()
         pass
 
-    def _add_system_prompt_to_context(self, system_prompt: str) -> None:
-        self._context.append(ChatMessage(role="system", content=system_prompt))
+    def _add_system_prompt_to_context(self) -> None:
+        self._context.append(ChatMessage(role="system", content=self._config.system_prompt))
 
     def _add_user_input_to_context(self, user_input: str) -> None:
         self._context.append(ChatMessage(role="user", content=user_input))
@@ -45,9 +45,10 @@ class Terminal:
         self._context.append(ChatMessage(role="user", content=context))
 
     def _trim_context(self, llm_context_size: int) -> None:
-        while llm_context_size < self._current_context_size:
+        while llm_context_size < self._current_context_size + len(self._config.system_prompt):
             size, start, end = self._context_windows.popleft()
             self._current_context_size -= size
+        self._add_system_prompt_to_context()
 
     def _clear_context(self) -> None:
         self._context.clear()
