@@ -16,7 +16,7 @@ class Terminal:
     def __init__(self):
         self.console = Console()
         self.config = Config()
-        self.context: list[ChatMessage] = []
+        self.history: list[ChatMessage] = []
         self.ipython_instance = get_ipython()
         self.ipython_history_manager = HistoryAccessor()
 
@@ -24,30 +24,30 @@ class Terminal:
         markdownOutput = Markdown(rawOutput)
         self.console.print(markdownOutput)
 
-    def _add_system_prompt_to_context(self, system_prompt: str) -> None:
-        self.context.append(ChatMessage(role="system", content=system_prompt))
+    def _add_system_prompt_to_history(self, system_prompt: str) -> None:
+        self.history.append(ChatMessage(role="system", content=system_prompt))
 
-    def _add_user_input_to_context(self, user_input: str) -> None:
-        self.context.append(ChatMessage(role="user", content=user_input))
+    def _add_user_input_to_history(self, user_input: str) -> None:
+        self.history.append(ChatMessage(role="user", content=user_input))
 
-    def _add_llm_response_to_context(self, llm_str_response: str) -> None:
-        self.context.append(ChatMessage(role="system", content=llm_str_response))
+    def _add_llm_response_to_history(self, llm_str_response: str) -> None:
+        self.history.append(ChatMessage(role="system", content=llm_str_response))
 
-    def _add_error_to_context(self, err_value: str) -> None:
+    def _add_error_to_history(self, err_value: str) -> None:
         context: str = (
             "The command ran at the terminal and the error I got from it is\n"
             + err_value
             + "How do I fix it?"
         )
-        self.context.append(ChatMessage(role="user", content=context))
+        self.history.append(ChatMessage(role="user", content=context))
 
     def _trim_context(self, size: int) -> None:
         pass
 
-    def _reset_context(self) -> None:
-        self.context.clear()
+    def _reset_history(self) -> None:
+        self.history.clear()
 
-    def _build_context_for_assists(self, count: int = 5) -> str:
+    def _build_command_history_for_assists(self, count: int = 5) -> str:
         # Need the session id to be able to extract history of the current session to feed it as context to the llm
         current_ipython_session_id: int = (
             self.ipython_history_manager.get_last_session_id()
@@ -74,40 +74,37 @@ class Terminal:
 
     def _handle_initial_error(self, err_value: str) -> None:
         self._display_formatted_output("Processing the error to help you...")
-        self._add_error_to_context(err_value)
-        llm_json_response: ChatResponse = generate_response(
-            context=self.context, model_name=self.config.get_model()
+        self._add_error_to_history(err_value)
+        llm_json_response: ChatResponse = generate_response_without_rag(
+            context=self.history, model_name=self.config.get_model()
         )
         llm_str_response: str = llm_json_response.message.content or ""
         self._display_formatted_output(llm_str_response)
-        self._add_llm_response_to_context(llm_str_response)
+        self._add_llm_response_to_history(llm_str_response)
 
     def _handle_empty_input(self) -> None:
         self._display_formatted_output("Please enter an input\n")
 
     def _handle_input_with_existing_context(self, user_input: str) -> None:
-        self._add_user_input_to_context(user_input)
+        self._add_user_input_to_history(user_input)
         llm_json_response: ChatResponse = generate_response(
-            context=self.context, model_name=self.config.get_model()
+            history=self.history, model_name=self.config.get_model()
         )
         llm_str_response: str = llm_json_response.message.content or ""
         self._display_formatted_output(llm_str_response)
-        self._add_llm_response_to_context(llm_str_response)
+        self._add_llm_response_to_history(llm_str_response)
 
     def _handle_fresh_input(self, user_input: str) -> None:
-        self._add_system_prompt_to_context(self.config.get_system_prompt())
-        context: str = self._build_context_for_assists()
-        self._add_user_input_to_context(context + user_input)
-        llm_json_response: ChatResponse = generate_response(
-            context=self.context, model_name=self.config.get_model()
-        )
-        llm_str_response: str = llm_json_response.message.content or ""
+        self._add_system_prompt_to_history(self.config.get_system_prompt())
+        command_history: str = self._build_command_history_for_assists()
+        self._add_user_input_to_history(command_history + user_input)
+        llm_str_response: str = generate_response(user_input=user_input, system_prompt=self.config.get_system_prompt(), history=self.history, model_name=self.config.get_model(), index=self.config._rag_index)
         self._display_formatted_output(llm_str_response)
-        self._add_llm_response_to_context(llm_str_response)
+        self._add_llm_response_to_history(llm_str_response)
 
     def handle_input(self, user_input: str) -> None:
         # if not new run
-        if self.context:
+        if self.history:
             # if user input is not empty
             if user_input:
                 self._handle_input_with_existing_context(user_input)
