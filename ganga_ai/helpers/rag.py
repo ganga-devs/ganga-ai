@@ -15,6 +15,7 @@ RAG_STATE_FILE: str = "./cache/rag_state.json"
 RAG_STORE = "./cache/rag"
 DATA_STORE = "./cache/data"
 
+
 def create_new_rag_cache_path(rag_cache_path: str):
     if os.path.exists(rag_cache_path):
         shutil.rmtree(rag_cache_path)
@@ -48,8 +49,10 @@ def load_rag_index():
     index = load_index_from_storage(storage_context)
     return index
 
+
 def remove_rag_index():
     pass
+
 
 def does_rag_exist():
     if not os.path.exists(RAG_STATE_FILE):
@@ -57,6 +60,7 @@ def does_rag_exist():
     with open(RAG_STATE_FILE) as rag_state_file:
         current_rag_state = json.load(rag_state_file)
         return current_rag_state.get("is_rag_enabled", False)
+
 
 def toggle_rag_state(state: bool):
     new_rag_state = {"is_rag_enabled": state}

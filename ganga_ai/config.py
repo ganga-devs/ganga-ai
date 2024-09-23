@@ -18,10 +18,12 @@ class Config:
         )
         self._load_rag_state()
         if self._is_rag_enabled:
-            self._rag_index = load_rag_index() 
+            self._rag_index = load_rag_index()
 
     def _enable_rag_state(self):
         self._is_rag_enabled = True
+        if self._is_rag_enabled:
+            self._rag_index = load_rag_index()
         toggle_rag_state(True)
 
     def _load_rag_state(self):

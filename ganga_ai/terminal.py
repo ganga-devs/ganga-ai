@@ -1,4 +1,4 @@
-from llama_index.core.base.llms.types import ChatMessage, ChatResponse
+from llama_index.core.base.llms.types import ChatMessage
 from rich.console import Console
 from rich.markdown import Markdown
 from IPython.core.getipython import get_ipython
@@ -6,6 +6,7 @@ from IPython.core.history import HistoryAccessor
 
 from ganga_ai.config import Config
 from ganga_ai.llm import generate_response
+from .helpers.rag import build_rag_index
 
 """
 This class is responsible for maintaing terminal state and does all the heavy lifting. It exposes apis the magic commands can use.
@@ -47,6 +48,10 @@ class Terminal:
     def _reset_history(self) -> None:
         self.history.clear()
 
+    def enable_rag(self, user_input: str) -> None:
+        build_rag_index(ganga_path=user_input)
+        self.config._enable_rag_state()
+
     def _build_command_history_for_assists(self, count: int = 5) -> str:
         # Need the session id to be able to extract history of the current session to feed it as context to the llm
         current_ipython_session_id: int = (
@@ -75,10 +80,13 @@ class Terminal:
     def _handle_initial_error(self, err_value: str) -> None:
         self._display_formatted_output("Processing the error to help you...")
         self._add_error_to_history(err_value)
-        llm_json_response: ChatResponse = generate_response_without_rag(
-            context=self.history, model_name=self.config.get_model()
+        llm_str_response: str = generate_response(
+            user_input=err_value,
+            system_prompt=self.config.get_system_prompt(),
+            history=self.history,
+            model_name=self.config.get_model(),
+            index=self.config._rag_index,
         )
-        llm_str_response: str = llm_json_response.message.content or ""
         self._display_formatted_output(llm_str_response)
         self._add_llm_response_to_history(llm_str_response)
 
@@ -87,10 +95,13 @@ class Terminal:
 
     def _handle_input_with_existing_context(self, user_input: str) -> None:
         self._add_user_input_to_history(user_input)
-        llm_json_response: ChatResponse = generate_response(
-            history=self.history, model_name=self.config.get_model()
+        llm_str_response: str = generate_response(
+            user_input=user_input,
+            system_prompt=self.config.get_system_prompt(),
+            history=self.history,
+            model_name=self.config.get_model(),
+            index=self.config._rag_index,
         )
-        llm_str_response: str = llm_json_response.message.content or ""
         self._display_formatted_output(llm_str_response)
         self._add_llm_response_to_history(llm_str_response)
 
@@ -98,7 +109,13 @@ class Terminal:
         self._add_system_prompt_to_history(self.config.get_system_prompt())
         command_history: str = self._build_command_history_for_assists()
         self._add_user_input_to_history(command_history + user_input)
-        llm_str_response: str = generate_response(user_input=user_input, system_prompt=self.config.get_system_prompt(), history=self.history, model_name=self.config.get_model(), index=self.config._rag_index)
+        llm_str_response: str = generate_response(
+            user_input=user_input,
+            system_prompt=self.config.get_system_prompt(),
+            history=self.history,
+            model_name=self.config.get_model(),
+            index=self.config._rag_index,
+        )
         self._display_formatted_output(llm_str_response)
         self._add_llm_response_to_history(llm_str_response)
 
