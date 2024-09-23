@@ -2,3 +2,6 @@ ipython
 llama-index
 llama-index-llms-ollama
 rich
+llama-index-embeddings-huggingface
+sphinx
+aiofile

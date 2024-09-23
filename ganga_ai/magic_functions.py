@@ -42,3 +42,12 @@ def assist(line, cell):
     """
     user_input = sanitize_user_input(line, cell)
     terminal.handle_input(user_input)
+
+
+def enable_rag(line, cell):
+    """
+    Builds the rag index when supplied with the url to a local ganga repository
+    %%rag path-to-repository
+    """
+    user_input = sanitize_user_input(line, cell)
+    terminal.enable_rag(user_input)
