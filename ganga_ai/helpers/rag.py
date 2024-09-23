@@ -10,7 +10,6 @@ import os
 import shutil
 import subprocess
 import json
-# from llama_index.llms.ollama import Ollama
 
 RAG_STATE_FILE: str = "./cache/rag_state.json"
 RAG_STORE = "./cache/rag"
@@ -63,55 +62,3 @@ def toggle_rag_state(state: bool):
     new_rag_state = {"is_rag_enabled": state}
     with open(RAG_STATE_FILE, "w") as f:
         json.dump(new_rag_state, f)
-
-
-# def clone_ganga_repo_and_get_doc_path():
-#     url = "git@github.com:ganga-devs/ganga.git"
-#     subprocess.run(["git", "clone", url], check=True)
-#     current_working_dir = os.getcwd()
-#     ganga_path = os.path.join(current_working_dir, "ganga")
-#     print(f"Repository cloned to {ganga_path}")
-#     ganga_doc_path = os.path.join(ganga_path, "doc")
-#     return ganga_doc_path
-
-# def consume_dir():
-#     rag_store = "./cache/rag"
-#     data_store = "./cache/data"
-#     ganga_doc_path = "../ganga/doc"
-#     create_new_rag_store(rag_store)
-#     generate_text_files(data_store=data_store, ganga_doc_path=ganga_doc_path)
-#     Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
-#     Settings.llm = Ollama(model="mistral", request_timeout=300)
-#     if not os.listdir(rag_store):
-#         documents = SimpleDirectoryReader(input_dir=data_store, recursive=True).load_data()
-#         index = VectorStoreIndex.from_documents(documents)
-#         index.storage_context.persist(persist_dir=rag_store)
-#     else:
-#         storage_context = StorageContext.from_defaults(persist_dir=rag_store)
-#         index = load_index_from_storage(storage_context)
-#     query_engine = index.as_query_engine()
-#     response = query_engine.query("What is ganga?")
-#     print(response)
-
-# def consume_dir():
-#     rag_store = "./cache/rag"
-#     data_store = "./cache/data"
-#     # ganga_doc_path = "../ganga/doc"
-#     # create_new_rag_store(rag_store)
-#     # generate_text_files(data_store=data_store, ganga_doc_path=ganga_doc_path)
-#     Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
-#     Settings.llm = Ollama(model="mistral", request_timeout=300)
-#     if not os.listdir(rag_store):
-#         documents = SimpleDirectoryReader(input_dir=data_store, recursive=True).load_data()
-#         index = VectorStoreIndex.from_documents(documents)
-#         index.storage_context.persist(persist_dir=rag_store)
-#     else:
-#         storage_context = StorageContext.from_defaults(persist_dir=rag_store)
-#         index = load_index_from_storage(storage_context)
-#     query_engine = index.as_query_engine()
-#     response = query_engine.query("What is claude?")
-#     print(response)
-
-
-# build_rag("../ganga")
-# consume_dir()
