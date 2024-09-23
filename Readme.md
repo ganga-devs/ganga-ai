@@ -39,8 +39,17 @@ pip install -r requirements.txt
 To run the code do
 ```[bash]
 $ ipython
-$ %load_ext ganga-ai
+$ %load_ext ganga_ai
+$ %%assist <your query>
 ```
+
+To enable the rag do
+```[bash]
+$ ipython
+$ %load_ext ganga_ai
+$ %%enable_rag <path-to-your-local-ganga-repository>
+```
+Then use it normally.
 
 # Docker
 To run the code in docker do

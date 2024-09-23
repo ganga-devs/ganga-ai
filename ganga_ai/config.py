@@ -5,7 +5,7 @@ from ganga_ai.helpers.rag import load_rag_index, toggle_rag_state, does_rag_exis
 
 class Config:
     _config_file_path = ".gangaairc"
-    _default_system_prompt = "Your task is to help users write and diagonize the python code they write at a Ipython terminal. Use markdown to format the responses. If the user is interactintg with you the message starts with %%assisst else the user is just running commands."
+    _default_system_prompt = "Your task is to help users write and diagonize the python code they write at a Ipython terminal. Use markdown to format the responses. If the user is interacting with you the message starts with %%assisst else the user is just running commands."
     _default_model = "mistral"
     _is_rag_enabled: bool = False
     _rag_index = None
