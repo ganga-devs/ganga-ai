@@ -1,5 +1,5 @@
 from IPython.core.ultratb import AutoFormattedTB
-from .helpers.sanitize_user_input import sanitize_user_input
+from .helpers import sanitize_user_input
 from .terminal import Terminal
 
 terminal = Terminal()
