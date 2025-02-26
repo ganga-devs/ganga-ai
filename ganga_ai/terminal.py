@@ -4,53 +4,20 @@ from rich.markdown import Markdown
 from IPython.core.getipython import get_ipython
 from IPython.core.history import HistoryAccessor
 
-from ganga_ai.config import Config
-from ganga_ai.llm import generate_response
-from .helpers.rag import build_rag_index
-
 """
-This class is responsible for maintaing terminal state and does all the heavy lifting. It exposes apis the magic commands can use.
+This class is responsible for maintaing terminal state. It exposes apis the magic commands can use.
 """
 
 
 class Terminal:
     def __init__(self):
         self.console = Console()
-        self.config = Config()
-        self.history: list[ChatMessage] = []
         self.ipython_instance = get_ipython()
         self.ipython_history_manager = HistoryAccessor()
 
     def _display_formatted_output(self, rawOutput: str) -> None:
         markdownOutput = Markdown(rawOutput)
         self.console.print(markdownOutput)
-
-    def _add_system_prompt_to_history(self, system_prompt: str) -> None:
-        self.history.append(ChatMessage(role="system", content=system_prompt))
-
-    def _add_user_input_to_history(self, user_input: str) -> None:
-        self.history.append(ChatMessage(role="user", content=user_input))
-
-    def _add_llm_response_to_history(self, llm_str_response: str) -> None:
-        self.history.append(ChatMessage(role="system", content=llm_str_response))
-
-    def _add_error_to_history(self, err_value: str) -> None:
-        context: str = (
-            "The command ran at the terminal and the error I got from it is\n"
-            + err_value
-            + "How do I fix it?"
-        )
-        self.history.append(ChatMessage(role="user", content=context))
-
-    def _trim_context(self, size: int) -> None:
-        pass
-
-    def _reset_history(self) -> None:
-        self.history.clear()
-
-    def enable_rag(self, user_input: str) -> None:
-        build_rag_index(ganga_path=user_input)
-        self.config._enable_rag_state()
 
     def _build_command_history_for_assists(self, count: int = 5) -> str:
         # Need the session id to be able to extract history of the current session to feed it as context to the llm
@@ -79,45 +46,40 @@ class Terminal:
 
     def _handle_initial_error(self, err_value: str) -> None:
         self._display_formatted_output("Processing the error to help you...")
-        self._add_error_to_history(err_value)
-        llm_str_response: str = generate_response(
-            user_input=err_value,
-            system_prompt=self.config.get_system_prompt(),
-            history=self.history,
-            model_name=self.config.get_model(),
-            index=self.config._rag_index,
-        )
-        self._display_formatted_output(llm_str_response)
-        self._add_llm_response_to_history(llm_str_response)
+        # llm_str_response: str = generate_response(
+        #     user_input=err_value,
+        #     system_prompt=self.config.get_system_prompt(),
+        #     history=self.history,
+        #     model_name=self.config.get_model(),
+        #     index=self.config._rag_index,
+        # )
+        # self._display_formatted_output(llm_str_response)
 
     def _handle_empty_input(self) -> None:
         self._display_formatted_output("Please enter an input\n")
 
     def _handle_input_with_existing_context(self, user_input: str) -> None:
-        self._add_user_input_to_history(user_input)
-        llm_str_response: str = generate_response(
-            user_input=user_input,
-            system_prompt=self.config.get_system_prompt(),
-            history=self.history,
-            model_name=self.config.get_model(),
-            index=self.config._rag_index,
-        )
-        self._display_formatted_output(llm_str_response)
-        self._add_llm_response_to_history(llm_str_response)
+        # llm_str_response: str = generate_response(
+        #     user_input=user_input,
+        #     system_prompt=self.config.get_system_prompt(),
+        #     history=self.history,
+        #     model_name=self.config.get_model(),
+        #     index=self.config._rag_index,
+        # )
+        # self._display_formatted_output(llm_str_response)
+        pass
 
-    def _handle_fresh_input(self, user_input: str) -> None:
-        self._add_system_prompt_to_history(self.config.get_system_prompt())
-        command_history: str = self._build_command_history_for_assists()
-        self._add_user_input_to_history(command_history + user_input)
-        llm_str_response: str = generate_response(
-            user_input=user_input,
-            system_prompt=self.config.get_system_prompt(),
-            history=self.history,
-            model_name=self.config.get_model(),
-            index=self.config._rag_index,
-        )
-        self._display_formatted_output(llm_str_response)
-        self._add_llm_response_to_history(llm_str_response)
+    # def _handle_fresh_input(self, user_input: str) -> None:
+        # command_history: str = self._build_command_history_for_assists()
+        # self._add_user_input_to_history(command_history + user_input)
+        # llm_str_response: str = generate_response(
+        #     user_input=user_input,
+        #     system_prompt=self.config.get_system_prompt(),
+        #     history=self.history,
+        #     model_name=self.config.get_model(),
+        #     index=self.config._rag_index,
+        # )
+        # self._display_formatted_output(llm_str_response)
 
     def handle_input(self, user_input: str) -> None:
         # if not new run
