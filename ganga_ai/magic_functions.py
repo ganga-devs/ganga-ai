@@ -1,9 +1,6 @@
 from IPython.core.ultratb import AutoFormattedTB
-
-from .helpers.sanitize_user_input import sanitize_user_input
-from .terminal import Terminal
-
-terminal = Terminal()
+from ganga_ai.terminal import terminal
+from ganga_ai.evaluation import evaluate_rag
 itb = AutoFormattedTB(mode="Plain", tb_offset=1)
 
 """
@@ -24,7 +21,7 @@ def custom_exception(shell, etype, evalue, tb, tb_offset=None):
         stb = itb.structured_traceback(etype, evalue)
         sstb = itb.stb2text(stb)
         terminal.handle_error(sstb)
-    except Exception as err:
+    except Exception as _:
         pass
     # if user interrupts it
     except KeyboardInterrupt:
@@ -40,14 +37,7 @@ def assist(line, cell):
     variable provided to us by IPython.
     So we need to sanitize and combine both before passing it to the llm.
     """
-    user_input = sanitize_user_input(line, cell)
-    terminal.handle_input(user_input)
+    terminal.handle_input(line, cell)
 
-
-def enable_rag(line, cell):
-    """
-    Builds the rag index when supplied with the url to a local ganga repository
-    %%rag path-to-repository
-    """
-    user_input = sanitize_user_input(line, cell)
-    terminal.enable_rag(user_input)
+def eval_rag(line, cell):
+    evaluate_rag()

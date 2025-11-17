@@ -1,7 +1,9 @@
+GitPython
+aiofile
 ipython
 llama-index
-llama-index-llms-ollama
-rich
 llama-index-embeddings-huggingface
+llama-index-llms-ollama
+llama-index-vector-stores-postgres
+rich
 sphinx
-aiofile

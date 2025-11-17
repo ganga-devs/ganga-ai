@@ -1,0 +1,32 @@
+name: Ganga-AI-Extension
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    container_name: pg-db
+    restart: always
+    environment:
+      POSTGRES_DB: rag
+      POSTGRES_USER: cern
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    deploy:
+      resources:
+        reservations:
+          devices:
+          - driver: nvidia
+            capabilities: ["gpu"]
+            count: all
+    volumes:
+      - ${HOME}/.ollama:/root/.ollama
+      - ./modelfiles:/modelfiles
+    restart: unless-stopped

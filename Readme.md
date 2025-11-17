@@ -6,33 +6,58 @@
 $ sudo pacman -S ollama
 ```
 
-Then create the file /home/usr/.config/systemd/user/ollama.service with the content
-```[bash]
-[Unit]
-Description=Ollama Serve
-After=network-online.target
-
-[Service]
-ExecStart=/usr/bin/ollama serve
-Restart=always
-RestartSec=3
-
-[Install]
-WantedBy=default.target
-```
-
-Then run
-```[bash]
-$ systemctl --user enable ollama.service 
-$ systemctl --user start ollama.service 
-```
-
 ## Python packages
 To create the python environment do
 ```[bash]
-pyenv virtualenv 3.8 ganga-ai8
-pyenv activate ganga-ai8
+pyenv virtualenv 3.11 ganga-ai
+pyenv activate ganga-ai
 pip install -r requirements.txt
+```
+
+
+## Docker
+```[bash]
+$ sudo pacman -S docker
+```
+
+Intialize the docker service
+```
+sudo systemctl enable docker.service
+sudo systemctl start docker.service
+```
+
+Optionally cross check the documentation for your setup and see if you need to give docker more permissions (you need to on arch linux and I am assuming on other linux's too)
+```
+$ sudo groupadd docker
+$ sudo usermod -aG docker $USER
+```
+
+If you have a gpu enable support for it so that your docker container can utilize it.
+For nvidia
+```
+$ sudo pacman -S nvidia-container-toolkit
+$ sudo nvidia-ctk runtime configure --runtime=docker
+```
+
+Test if the nvidia gpu is discoverable from docker via
+```
+$ docker run --gpus all nvidia/cuda:11.5.2-base-ubuntu20.04 nvidia-smi
+```
+
+# Configuration
+To add your own config in `ganga-ai` directory put in a rc file. The default config is
+```
+MODEL = qwen3:8b
+CONTEXT_WINDOW = 2048 # context window of the llm model
+EMBEDDING_MODEL = BAAI/bge-small-en-v1.5 # the embedding model that will be used
+DATA_URLS = https://github.com/ganga-devs/ganga # data urls that is used to build the rag
+CACHE_DIR = cache # where the cache should be kept
+DBNAME = rag # postrgress vector db name
+USERNAME = cern # postrgress vector db username
+PASSWORD = root # postgress vector db password
+HOST = localhost # postgress host
+PORT = 5432 # postgress port
+TRANSFORMER_DIMENSION = 384 # dimensions of the embedding model
 ```
 
 # Running the code
@@ -41,24 +66,7 @@ To run the code do
 $ ipython
 $ %load_ext ganga_ai
 $ %%assist <your query>
+$ %%eval_rag # to see how the system is doing on some common tasks. The results can be seen in `eval_results.md`
 ```
 
-To enable the rag do
-```[bash]
-$ ipython
-$ %load_ext ganga_ai
-$ %%enable_rag <path-to-your-local-ganga-repository>
-```
-Then use it normally.
-
-# Docker
-To run the code in docker do
-```
-docker build --tag ganga-ai . # ganga-ai can be named anything
-docker run -it --name test ganga-ai # test can be named anything
-```
-
-To remove the current image do
-```
-docker rmi test
-```
+On the first run the plugin builds a local rag and that takes a little time.

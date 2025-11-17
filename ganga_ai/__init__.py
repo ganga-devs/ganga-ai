@@ -1,9 +1,9 @@
-from .magic_functions import assist, enable_rag, custom_exception
+from ganga_ai.magic_functions import assist, custom_exception, eval_rag
 
 
 def load_ipython_extension(ipython):
     ipython.register_magic_function(assist, "cell")
-    ipython.register_magic_function(enable_rag, "cell")
+    ipython.register_magic_function(eval_rag, "cell")
     ipython.set_custom_exc((Exception,), custom_exception)
 
 
