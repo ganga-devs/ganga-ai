@@ -1,12 +1,14 @@
-On loading of the plugin config is read and the assist method is called. 
-
-References
+References for ipython related things
 https://stackoverflow.com/questions/18907103/ipython-can-i-provide-input-to-a-shell-command
 https://stackoverflow.com/questions/60064718/how-to-get-the-current-ipython-session-number-for-use-in-history
 https://stackoverflow.com/questions/40110540/jupyter-magic-to-handle-notebook-exceptions
 https://ipython.readthedocs.io/en/stable/config/custommagics.html
 
-Ipython 'In' and 'Out'
-We want to be able to pass lets say the last n number of In's and if they produced any corresponding Out's too as context to the llm.
+VectorDB
+PostgreSQL with an extension is being used as the vector db.
 
-So Out is a dictionary with keys corresponding to the generated output. But not necessarily will all inputs have an output.
+LLM server
+Ollama is used to download and serve the models. A nvidia gpu is utilized in case it is found. Else there is a fall back to the cpu.
+
+Embedding models
+Embedding models are downloaded from hugging face at run time. This download happens only once during the initial setup process.
