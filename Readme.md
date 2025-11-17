@@ -1,3 +1,11 @@
+# About
+Ganga-ai is an Ipython extension that runs on your local. It creates a rag from supplied documents. All your data stays on your local machine.
+
+![How it looks](./docs/markdown_support.jpeg)
+
+While the original project was inteded to be used with [Ganga](https://github.com/ganga-devs/ganga) the extension can be used generically inside any Ipython session and with any document format with minimal changes. If you need support for any format or if anything does not work please open an issue I will look into it.
+
+
 # Installation of dependencies
 ## Ollama
 [Ollama](https://ollama.com) is used for downloading and serving a large number of llm packages. To install it follow the instructions given here https://ollama.com/download. If you are on linux and your Ollama is available in your distro's repository then you can install it through distro's package manager and set up a systemd service. For Arch linux the steps would be
@@ -74,6 +82,3 @@ On the first run the plugin builds a local rag and that takes a little time.
 
 # Notes
 1. The docker container's ollama tries to use the user's ollama models so that the app does not need to download the same model twice if it's already available. And if it is not then so that other apps can benefit from that original download too.
-2. Even though it is a terminal only app markdown is supported for code blocks
-
-![Code output](./docs/markdown_support.jpeg)
