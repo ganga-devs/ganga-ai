@@ -63,6 +63,7 @@ TRANSFORMER_DIMENSION = 384 # dimensions of the embedding model
 # Running the code
 To run the code do
 ```[bash]
+$ pyenv activate ganga-ai
 $ ipython
 $ %load_ext ganga_ai
 $ %%assist <your query>
@@ -70,3 +71,9 @@ $ %%eval_rag # to see how the system is doing on some common tasks. The results 
 ```
 
 On the first run the plugin builds a local rag and that takes a little time.
+
+# Notes
+1. The docker container's ollama tries to use the user's ollama models so that the app does not need to download the same model twice if it's already available. And if it is not then so that other apps can benefit from that original download too.
+2. Markdown is supported
+
+![Code output](./docs/markdown_support.jpeg)
