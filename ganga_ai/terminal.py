@@ -39,8 +39,7 @@ class Terminal:
 
         if not user_input:
             self.handle_empty_input()
-
-        if ipython_history.history:
+        elif ipython_history.history:
             self.handle_input_with_existing_context(user_input)
         else:
             self.handle_fresh_input(user_input)
