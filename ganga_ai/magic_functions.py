@@ -1,6 +1,6 @@
 from IPython.core.ultratb import AutoFormattedTB
 from ganga_ai.terminal import terminal
-from ganga_ai.evaluation import evaluate_rag
+from ganga_ai.auth import device_authorization_login, device_logout
 itb = AutoFormattedTB(mode="Plain", tb_offset=1)
 
 """
@@ -39,5 +39,8 @@ def assist(line, cell):
     """
     terminal.handle_input(line, cell)
 
-def eval_rag(line, cell):
-    evaluate_rag()
+def login(line, cell):
+    device_authorization_login()
+
+def logout(line, cell):
+    device_logout()
