@@ -36,11 +36,12 @@ class Terminal:
 
     def handle_input(self, line: str, cell: str) -> None:
         user_input: str = self.sanitize_user_input(line, cell)
+
+        if not user_input:
+            self.handle_empty_input()
+
         if ipython_history.history:
-            if user_input:
-                self.handle_input_with_existing_context(user_input)
-            else:
-                self.handle_empty_input()
+            self.handle_input_with_existing_context(user_input)
         else:
             self.handle_fresh_input(user_input)
 
